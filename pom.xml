@@ -20,6 +20,8 @@
         <saxon.he.version>9.8.0-14</saxon.he.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
         <junit.platform.version>1.2.0</junit.platform.version>
+        <powermock.module.version>1.6.4</powermock.module.version>
+        <powermock.api.version>1.6.4</powermock.api.version>
     </properties>
     <dependencies>
         <dependency>
@@ -36,13 +38,13 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>1.6.4</version>
+            <version>${powermock.module.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
-            <version>1.6.4</version>
+            <version>${powermock.api.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
