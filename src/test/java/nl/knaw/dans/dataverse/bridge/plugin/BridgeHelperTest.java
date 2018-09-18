@@ -32,7 +32,6 @@ public class BridgeHelperTest{
 
     @Before
     public void before(){
-        MockitoAnnotations.initMocks(this);
         mockStatic(BridgeHelper.class);
         bodyPart = "<feed xmlns=\"http://www.w3.org/2005/Atom\"><id>https://act.easy.dans.knaw.nl/sword2/statement" +
                 "/f649d944-fdc3-473a-9b9d-08e832390b52</id><title type=\"text\">Deposit f649d944-fdc3-473a-9b9d-08e832390b52</title>" +
