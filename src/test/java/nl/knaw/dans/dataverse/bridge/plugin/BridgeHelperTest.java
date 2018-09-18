@@ -23,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * Unit test for simple App.
+ * Unit test for BridgeHelperTest.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BridgeHelper.class})
