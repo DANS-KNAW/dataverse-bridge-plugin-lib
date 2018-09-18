@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface IAction {
     Map<String, String> transform(String ddiExportUrl, String apiToken, List<XslStreamSource> xslStreamSourceList) throws BridgeException;
 
-    default Optional<File> composeBagit(String bagitBaseDir, String apiToken, String srcXml, Map<String, String> transformedXml) {
+    default Optional<File> composeBagit(String bagitBaseDir, String apiToken, String srcXml, Map<String, String> transformedXml) throws BridgeException {
         return Optional.empty();
     }
 
