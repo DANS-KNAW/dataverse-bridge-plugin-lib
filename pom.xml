@@ -22,6 +22,8 @@
         <junit.platform.version>1.2.0</junit.platform.version>
         <powermock.module.version>1.6.4</powermock.module.version>
         <powermock.api.version>1.6.4</powermock.api.version>
+        <slj.api.version>1.7.5</slj.api.version>
+        <sljf.log4j.version>1.7.5</sljf.log4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -50,12 +52,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+            <version>${slj.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
+            <version>${sljf.log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>net.lingala.zip4j</groupId>

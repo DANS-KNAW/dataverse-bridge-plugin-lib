@@ -11,7 +11,7 @@ public class BridgeExceptionTest {
     public class TestedObject {
         public void aMethod(int i) throws BridgeException {
             if (i < 1)
-                throw new BridgeException("Exception is thrown", this.getClass());
+                throw new BridgeException("Exception is thrown", BridgeExceptionTest.class);
         }
     }
 
@@ -21,7 +21,7 @@ public class BridgeExceptionTest {
         BridgeException thrown = assertThrows(BridgeException.class, () -> testedObject.aMethod(0));
 
         assertEquals("Exception is thrown", thrown.getMessage());
-        assertEquals("nl.knaw.dans.dataverse.bridge.plugin.BridgeExceptionTest$TestedObject", thrown.getClassName());
+        assertEquals("nl.knaw.dans.dataverse.bridge.plugin.BridgeExceptionTest", thrown.getClassName());
     }
 
 }
