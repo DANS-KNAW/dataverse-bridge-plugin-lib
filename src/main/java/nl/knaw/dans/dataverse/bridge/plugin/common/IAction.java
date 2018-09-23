@@ -13,11 +13,13 @@ import java.util.Optional;
  * Created by Eko Indarto.
  */
 public interface IAction {
-    Map<String, String> transform(String ddiExportUrl, String apiToken, List<XslStreamSource> xslStreamSourceList) throws BridgeException;
+    default Optional<Map<String, String>> transform(String ddiExportUrl, String apiToken, List<XslStreamSource> xslStreamSourceList) throws BridgeException {
+        return Optional.empty();
+    };
 
     default Optional<File> composeBagit(String bagitBaseDir, String apiToken, String srcXml, Map<String, String> transformedXml) throws BridgeException {
         return Optional.empty();
     }
 
-    IResponseData execute(Optional<File> bagitZipFile, IRI colIri, String uid, Optional<String> pwd) throws BridgeException;
+    IResponseData execute(Optional<File> bagitZipFile, IRI colIri, String uid, String pwd) throws BridgeException;
 }
