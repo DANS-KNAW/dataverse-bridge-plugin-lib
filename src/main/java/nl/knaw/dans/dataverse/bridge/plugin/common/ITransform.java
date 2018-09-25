@@ -10,7 +10,7 @@ import java.util.Optional;
  * @author: Eko Indarto
  */
 public interface ITransform {
-    Map<String, String> getTransformResult(String dvMetadataUrl, String apiToken, List<XslStreamSource> xslStreamSourceList) throws BridgeException;
+    Map<String, String> transformMetadata(SourceDar sourceDar, List<XslStreamSource> xslStreamSourceList) throws BridgeException;
     default Optional<DvFileList> getDvFileList(String apiToken) {
         return Optional.empty();
     }
