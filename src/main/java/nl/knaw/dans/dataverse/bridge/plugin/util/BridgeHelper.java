@@ -3,6 +3,7 @@ package nl.knaw.dans.dataverse.bridge.plugin.util;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
+import net.sf.saxon.s9api.*;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Element;
@@ -10,6 +11,7 @@ import org.apache.abdera.parser.Parser;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
@@ -24,13 +26,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 
 /*
-NOTES: The most part of the code comes from
+NOTES: The some part of the code comes from
 https://github.com/DANS-KNAW/easy-sword2-dans-examples/blob/master/src/main/java/nl/knaw/dans/easy/sword2examples/Common.java
  */
 
@@ -53,6 +58,15 @@ public class BridgeHelper {
         BasicCredentialsProvider credsProv = new BasicCredentialsProvider();
         credsProv.setCredentials(new AuthScope(uri.getHost(), uri.getPort()), new UsernamePasswordCredentials(uid, pw));
         return HttpClients.custom().setDefaultCredentialsProvider(credsProv).setDefaultRequestConfig(config).build();
+    }
+
+    public static CloseableHttpResponse post(URI uri, String mimeType, String input, CloseableHttpClient http, NameValuePair... nvps) throws IOException {
+        HttpUriRequest request = RequestBuilder.create("POST").setUri(uri).setConfig(RequestConfig.custom()
+                .setExpectContinueEnabled(true).build())
+                .addParameters(nvps)
+                .setEntity(new ByteArrayEntity(input.getBytes(), ContentType.create(mimeType))) //
+                .build();
+        return http.execute(request);
     }
 
     public static CloseableHttpResponse sendChunk(DigestInputStream dis, int size, String method, URI uri, String filename, String mimeType, CloseableHttpClient http, boolean inProgress) throws IOException {
@@ -92,5 +106,25 @@ public class BridgeHelper {
         Parser parser = abdera.getParser();
         Document<T> receipt = parser.parse(new StringReader(text));
          return receipt.getRoot();
+    }
+
+    /*
+    Requirements:
+    - XSLT 3.0
+    - Saxon HE 9.8
+     */
+    public static String convertJsonToXml(String jsonSourceUrl, String xsltSourceUrl, String initialXsltTemplate, String paramJson) throws SaxonApiException, IOException {
+        LOG.debug("xsltSourceUrl: {} \tdvnJsonMetadataSourceUrl: {}", xsltSourceUrl, jsonSourceUrl);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Processor processor = new Processor(false);
+        Serializer serializer = processor.newSerializer(baos);
+        XsltCompiler compiler = processor.newXsltCompiler();
+        XsltExecutable executable = compiler.compile(new StreamSource(xsltSourceUrl));
+        XsltTransformer transformer = executable.load();
+        transformer.setInitialTemplate(new QName(initialXsltTemplate));
+        transformer.setParameter(new QName(paramJson), new XdmAtomicValue(IOUtils.toString(new URL(jsonSourceUrl), StandardCharsets.UTF_8)));
+        transformer.setDestination(serializer);
+        transformer.transform();
+        return baos.toString();
     }
 }

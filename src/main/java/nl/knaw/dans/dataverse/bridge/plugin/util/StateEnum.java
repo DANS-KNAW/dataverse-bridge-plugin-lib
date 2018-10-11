@@ -26,6 +26,6 @@ public enum StateEnum {
                 return b;
             }
         }
-        return null;
+        throw new IllegalArgumentException("No matching constant for [" + text + "]");
     }
 }

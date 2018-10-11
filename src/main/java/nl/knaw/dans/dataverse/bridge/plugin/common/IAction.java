@@ -21,7 +21,7 @@ public interface IAction {
         return Optional.empty();
     };
 
-    default Optional<File> composeBagit(SourceDar sourceDar, String bagitBaseDir, Map<String, String> transformedMetadata) throws BridgeException {
+    default Optional<File> composeBag(SourceDar sourceDar, String bagitBaseDir, Map<String, String> transformedMetadata) throws BridgeException {
         return Optional.empty();
     }
 
