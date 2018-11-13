@@ -1,4 +1,4 @@
-package nl.knaw.dans.dataverse.bridge.plugin.common;
+package nl.knaw.dans.bridge.plugin.lib.common;
 
 import java.util.Optional;
 
@@ -18,6 +18,10 @@ public interface IResponseData {
     }
 
     default Optional<String> getLandingPage() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getDarLandingPage() {
         return Optional.empty();
     }
 

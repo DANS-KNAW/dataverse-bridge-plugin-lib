@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>nl.knaw.dans.dataverse.bridge.plugin</groupId>
-    <artifactId>bridge-plugin</artifactId>
+    <groupId>nl.knaw.dans.bridge.plugin.lib</groupId>
+    <artifactId>bridge-plugin-lib</artifactId>
     <packaging>jar</packaging>
-    <version>0.7</version>
-    <name>bridge-plugin</name>
+    <version>1.0</version>
+    <name>bridge-plugin-lib</name>
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

@@ -1,4 +1,4 @@
-package nl.knaw.dans.dataverse.bridge.plugin.util;
+package nl.knaw.dans.bridge.plugin.lib.util;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -25,19 +25,21 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
-
-/*
-NOTES: The some part of the code comes from
-https://github.com/DANS-KNAW/easy-sword2-dans-examples/blob/master/src/main/java/nl/knaw/dans/easy/sword2examples/Common.java
- */
+import java.text.DecimalFormat;
 
 public class BridgeHelper {
     private static final String BAGIT_URI = "http://purl.org/net/sword/package/BagIt";
@@ -108,21 +110,83 @@ public class BridgeHelper {
          return receipt.getRoot();
     }
 
+    public static String formatFileSize(long size) {
+        String hrSize;
+
+        double b = size;
+        double k = size/1024.0;
+        double m = ((size/1024.0)/1024.0);
+        double g = (((size/1024.0)/1024.0)/1024.0);
+        double t = ((((size/1024.0)/1024.0)/1024.0)/1024.0);
+
+        DecimalFormat dec = new DecimalFormat("0.00");
+
+        if ( t>1 ) {
+            hrSize = dec.format(t).concat(" TB");
+        } else if ( g>1 ) {
+            hrSize = dec.format(g).concat(" GB");
+        } else if ( m>1 ) {
+            hrSize = dec.format(m).concat(" MB");
+        } else if ( k>1 ) {
+            hrSize = dec.format(k).concat(" KB");
+        } else {
+            hrSize = dec.format(b).concat(" Bytes");
+        }
+
+        return hrSize;
+    }
+
+    public static String transform(org.w3c.dom.Document doc) throws TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        return writer.toString();
+    }
+
+
+    public static String transform(Templates cachedXsl, org.w3c.dom.Document doc) throws TransformerException {
+        Transformer transformer = cachedXsl.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        return writer.toString();
+    }
+
+    public static org.w3c.dom.Document buildDocumentFromString(String xmlString) throws ParserConfigurationException, IOException, SAXException {
+        LOG.debug("xmlString: {}", xmlString);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlString)));
+    }
+
     /*
     Requirements:
     - XSLT 3.0
     - Saxon HE 9.8
      */
-    public static String convertJsonToXml(String jsonSourceUrl, String xsltSourceUrl, String initialXsltTemplate, String paramJson) throws SaxonApiException, IOException {
+    public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException {
+        LOG.debug("jsonMetadataSourceUrlxsl: {} \t jsonMetadataSourceUrlL {}", jsonSourceUrl, xsltSourceUrl);
+        LOG.debug("initialXsltTemplate: {}, paramJson: {}", "initialTemplate", "dvnJson");
+        return transformJsonToXml(jsonSourceUrl, xsltSourceUrl, "initialTemplate", "dvnJson");
+    }
+
+    /*
+    Requirements:
+    - XSLT 3.0
+    - Saxon HE 9.8
+     */
+    public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl, String initialXsltTemplate, String paramJson) throws SaxonApiException, IOException {
         LOG.debug("xsltSourceUrl: {} \tdvnJsonMetadataSourceUrl: {}", xsltSourceUrl, jsonSourceUrl);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Processor processor = new Processor(false);
         Serializer serializer = processor.newSerializer(baos);
         XsltCompiler compiler = processor.newXsltCompiler();
-        XsltExecutable executable = compiler.compile(new StreamSource(xsltSourceUrl));
+        XsltExecutable executable = compiler.compile(new StreamSource(IOUtils.toInputStream(IOUtils.toString(xsltSourceUrl), StandardCharsets.UTF_8)));
         XsltTransformer transformer = executable.load();
         transformer.setInitialTemplate(new QName(initialXsltTemplate));
-        transformer.setParameter(new QName(paramJson), new XdmAtomicValue(IOUtils.toString(new URL(jsonSourceUrl), StandardCharsets.UTF_8)));
+        transformer.setParameter(new QName(paramJson), new XdmAtomicValue(IOUtils.toString(jsonSourceUrl, StandardCharsets.UTF_8)));
         transformer.setDestination(serializer);
         transformer.transform();
         return baos.toString();

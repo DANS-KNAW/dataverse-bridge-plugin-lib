@@ -1,4 +1,4 @@
-package nl.knaw.dans.dataverse.bridge.plugin.util;
+package nl.knaw.dans.bridge.plugin.lib.util;
 /*
  * @author: Eko Indarto
  */

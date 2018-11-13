@@ -1,8 +1,10 @@
-package nl.knaw.dans.dataverse.bridge.plugin;
+package nl.knaw.dans.bridge.plugin.lib;
 
-import nl.knaw.dans.dataverse.bridge.plugin.util.BridgeHelper;
+import net.sf.saxon.s9api.SaxonApiException;
+import nl.knaw.dans.bridge.plugin.lib.util.BridgeHelper;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.BasicHttpEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +12,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -25,11 +30,13 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BridgeHelper.class})
-public class BridgeHelperTest{
+public class BridgeHelperTest {
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static String bodyPart;
+    private static final String actualDdmFileName = "src/test/resources/xml/hdl-101204-hkdsa-files-location-result.xml";
 
     @Before
-    public void before(){
+    public void before() {
         mockStatic(BridgeHelper.class);
         bodyPart = "<feed xmlns=\"http://www.w3.org/2005/Atom\"><id>https://act.easy.dans.knaw.nl/sword2/statement" +
                 "/f649d944-fdc3-473a-9b9d-08e832390b52</id><title type=\"text\">Deposit f649d944-fdc3-473a-9b9d-08e832390b52</title>" +
@@ -38,10 +45,13 @@ public class BridgeHelperTest{
                 "<entry><id>urn:uuid:f649d944-fdc3-473a-9b9d-08e832390b52</id><title type=\"text\">Resource urn:uuid:f649d944-fdc3-473a-9b9d-08e832390b52</title>" +
                 "<summary type=\"text\">Resource Part</summary><content type=\"multipart/related\" src=\"urn:uuid:f649d944-fdc3-473a-9b9d-08e832390b52\"></content></entry></feed>";
 
+        File actualDdmXmlFile = new File(actualDdmFileName);
+        if (actualDdmXmlFile.exists())
+            actualDdmXmlFile.delete();
     }
 
     @Test
-    public void parseTest(){
+    public void parseTest() {
         Abdera abdera = new Abdera();
         Feed feed = abdera.newFeed();
 
@@ -71,9 +81,12 @@ public class BridgeHelperTest{
     @Test
     public void readEntityAsStringTest() throws IOException {
         BasicHttpEntity he = new BasicHttpEntity();
+        //Given
         he.setContent(new ByteArrayInputStream(bodyPart.getBytes()));
         when(BridgeHelper.readEntityAsString(Mockito.anyObject())).thenCallRealMethod();
+        //When
         String s = BridgeHelper.readEntityAsString(he);
+        //Then
         assertEquals(bodyPart, s);
 
     }
@@ -81,9 +94,56 @@ public class BridgeHelperTest{
     @Test
     public void readChunkTest() throws IOException {
         byte[] input = bodyPart.getBytes(StandardCharsets.UTF_8);
+        //Given
         when(BridgeHelper.readChunk(Mockito.anyObject(), Mockito.anyInt())).thenCallRealMethod();
+        //When
         byte[] bytes = BridgeHelper.readChunk(new ByteArrayInputStream(input), bodyPart.length());
-
+        //Then
         assertArrayEquals(input, bytes);
     }
+
+    @Test
+    public void transformJsonToXml() throws IOException, SaxonApiException {
+        final File expectedDdmXmlFile = new File("src/test/resources/xml/hdl-101204-hkdsa-files-location.xml");
+        //Given
+        when(BridgeHelper.transformJsonToXml(Mockito.anyObject(), Mockito.anyObject())).thenReturn(FileUtils.readFileToString(expectedDdmXmlFile, StandardCharsets.UTF_8));
+        //When
+        String ddmXmlExpected = FileUtils.readFileToString(expectedDdmXmlFile, StandardCharsets.UTF_8);
+        String ddmXmlTransformationResult = BridgeHelper.transformJsonToXml(Mockito.anyObject(), Mockito.anyObject());
+        //Then
+        assertEquals(ddmXmlExpected, ddmXmlTransformationResult);
+
+        final File jsonSourceFile = new File("src/test/resources/json/hdl-101204-hkdsa.json");
+        final File xsltPathFile = new File("src/test/resources/xsl/dataverseJson-to-files-location.xsl");
+        final String initialXsltTemplate = "initialTemplate";
+        final String paramJson = "dvnJson";
+        //Given
+        when(BridgeHelper.transformJsonToXml(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject())).thenCallRealMethod();
+        //When
+        String ddmXmlTransformationResultRealCall = BridgeHelper.transformJsonToXml(jsonSourceFile.toURI().toURL(), xsltPathFile.toURI().toURL(), initialXsltTemplate, paramJson);
+        //Then
+        LOG.info("expected\n{}", ddmXmlExpected);
+        LOG.info("actual\n{}", ddmXmlTransformationResultRealCall);
+        File actualDdmXmlFile = new File(actualDdmFileName);
+
+        FileUtils.writeStringToFile(actualDdmXmlFile, ddmXmlTransformationResultRealCall, StandardCharsets.UTF_8);
+
+        assertTrue(FileUtils.contentEqualsIgnoreEOL(expectedDdmXmlFile, actualDdmXmlFile, StandardCharsets.UTF_8.name()));
+    }
+
+    @Test
+    public void formatFileSize() {
+        long fileSize = 10122004L;
+        String expectedFileSize = "9.65 MB";
+        when(BridgeHelper.formatFileSize(Mockito.anyLong())).thenReturn(expectedFileSize);
+        String actualFileSize = BridgeHelper.formatFileSize(fileSize);
+        System.out.println(actualFileSize);
+        assertEquals(expectedFileSize, actualFileSize);
+
+        when(BridgeHelper.formatFileSize(Mockito.anyLong())).thenCallRealMethod();
+        String actualFileSizeResult = BridgeHelper.formatFileSize(fileSize);
+        System.out.println(actualFileSizeResult);
+        assertEquals(expectedFileSize, actualFileSizeResult);
+    }
 }
+
