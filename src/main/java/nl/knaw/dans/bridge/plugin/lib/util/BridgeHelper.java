@@ -1,9 +1,11 @@
 package nl.knaw.dans.bridge.plugin.lib.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.sf.saxon.s9api.*;
+import nl.knaw.dans.bridge.plugin.lib.exception.BridgeException;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Element;
@@ -42,6 +44,8 @@ import java.security.DigestInputStream;
 import java.text.DecimalFormat;
 
 public class BridgeHelper {
+    private enum InputType{JSON, XML, OTHER}
+
     private static final String BAGIT_URI = "http://purl.org/net/sword/package/BagIt";
    // static final BagFactory bagFactory = new BagFactory();
     private static final Logger LOG = LoggerFactory.getLogger(BridgeHelper.class);
@@ -146,7 +150,7 @@ public class BridgeHelper {
     }
 
 
-    public static String transform(Templates cachedXsl, org.w3c.dom.Document doc) throws TransformerException {
+    public static String transformXmlToXml(Templates cachedXsl, org.w3c.dom.Document doc) throws TransformerException {
         Transformer transformer = cachedXsl.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         StringWriter writer = new StringWriter();
@@ -160,6 +164,47 @@ public class BridgeHelper {
         factory.setNamespaceAware(true);
         return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlString)));
     }
+
+    public static InputType getInputType(String text) {
+        try {
+            new ObjectMapper().readTree(text);
+            LOG.debug("Message is valid JSON.");
+            return InputType.JSON;
+        } catch (IOException e) {
+            //no need to log, only checking purpose
+        }
+
+        try {
+            DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(text)));
+            LOG.debug("Message is valid XML.");
+            return InputType.XML;
+        } catch (SAXException e) {
+            //no need to log, only checking purpose
+        } catch (IOException e) {
+            //no need to log, only checking purpose
+        } catch (ParserConfigurationException e) {
+            //no need to log, only checking purpose
+        }
+
+        return InputType.OTHER;
+    }
+
+    public static String transformSourceToXml(URL sourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException, BridgeException, TransformerException, ParserConfigurationException, SAXException {
+        String text = IOUtils.toString(sourceUrl, StandardCharsets.UTF_8);
+        InputType inputType = getInputType(text);
+        switch (inputType ) {
+            case JSON:
+                return transformJsonToXml(sourceUrl, xsltSourceUrl);
+            case XML:
+                TransformerFactory transFact = new net.sf.saxon.TransformerFactoryImpl();
+                Templates cachedXsl = transFact.newTemplates(new StreamSource(text));
+                return transformXmlToXml(cachedXsl, buildDocumentFromString(text));
+            default:
+                throw new BridgeException("Only accept JSON or XML ", BridgeHelper.class);
+        }
+    }
+
+
 
     /*
     Requirements:
