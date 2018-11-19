@@ -1,4 +1,4 @@
-package nl.knaw.dans.bridge.plugin.lib.bagit;
+package nl.knaw.dans.bridge.plugin.lib.util;
 
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFactory;

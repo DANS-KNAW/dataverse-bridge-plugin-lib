@@ -3,12 +3,18 @@ package nl.knaw.dans.bridge.plugin.lib.util;
  * @author: Eko Indarto
  */
 public enum StateEnum {
-    IN_PROGRESS("IN-PROGRESS"),
+    BAD_REQUEST("400"),
+    UNKNOWN("UNKNOWN"),
     ERROR("ERROR"),
-    FAILED("FAILED"),
-    ARCHIVED("ARCHIVED"),
+    IN_PROGRESS("IN-PROGRESS"),
+    REGISTERED("REGISTERED"),
+    UPDATED("UPDATED"),
+    SUBMITTED("SUBMITTED"),
     REJECTED("REJECTED"),
-    INVALID("INVALID");
+    FAILED("FAILED"),
+    INVALID("INVALID"),
+    ARCHIVED("ARCHIVED");
+
 
     private String value;
 

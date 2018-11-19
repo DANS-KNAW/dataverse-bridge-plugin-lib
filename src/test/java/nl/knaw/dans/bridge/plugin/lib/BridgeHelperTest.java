@@ -130,20 +130,5 @@ public class BridgeHelperTest {
 
         assertTrue(FileUtils.contentEqualsIgnoreEOL(expectedDdmXmlFile, actualDdmXmlFile, StandardCharsets.UTF_8.name()));
     }
-
-    @Test
-    public void formatFileSize() {
-        long fileSize = 10122004L;
-        String expectedFileSize = "9.65 MB";
-        when(BridgeHelper.formatFileSize(Mockito.anyLong())).thenReturn(expectedFileSize);
-        String actualFileSize = BridgeHelper.formatFileSize(fileSize);
-        System.out.println(actualFileSize);
-        assertEquals(expectedFileSize, actualFileSize);
-
-        when(BridgeHelper.formatFileSize(Mockito.anyLong())).thenCallRealMethod();
-        String actualFileSizeResult = BridgeHelper.formatFileSize(fileSize);
-        System.out.println(actualFileSizeResult);
-        assertEquals(expectedFileSize, actualFileSizeResult);
-    }
 }
 
