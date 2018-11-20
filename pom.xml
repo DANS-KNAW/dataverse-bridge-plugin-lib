@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2018 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+    Copyright (C) ${project.inceptionYear} DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -19,19 +19,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-<!--
+<!-- -->
     <parent>
         <groupId>nl.knaw.dans.shared</groupId>
         <artifactId>dans-java-prototype</artifactId>
         <version>1.65</version>
     </parent>
--->
+<!-- -->
+<!--
     <parent>
         <groupId>nl.knaw.dans.shared</groupId>
         <artifactId>dans-mvn-base</artifactId>
         <version>2.0.0</version>
     </parent>
-
+-->
     <groupId>nl.knaw.dans.bridge.plugin.lib</groupId>
     <artifactId>bridge-plugin-lib</artifactId>
     <packaging>jar</packaging>
@@ -196,6 +197,18 @@
                         <exclude>src/test/resources/xml/*</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- skip the assembly -->
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
