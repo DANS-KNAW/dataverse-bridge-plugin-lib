@@ -1,5 +1,5 @@
 /**
- * Copyright (C) ${project.inceptionYear} DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+ * Copyright (C) 2018 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.net.URL;
 /**
  * XslTransformer
  * 
- * @Created by: Eko Indarto
+ * Created by: Eko Indarto
  */
 public class XslTransformer {
     private String name;

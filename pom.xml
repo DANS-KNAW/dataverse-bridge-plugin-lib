@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) ${project.inceptionYear} DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+    Copyright (C) 2018 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,21 +18,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-<!-- -->
     <parent>
         <groupId>nl.knaw.dans.shared</groupId>
-        <artifactId>dans-java-prototype</artifactId>
-        <version>1.65</version>
+        <artifactId>dans-java-project</artifactId>
+        <version>2.1.5</version>
     </parent>
-<!-- -->
-<!--
-    <parent>
-        <groupId>nl.knaw.dans.shared</groupId>
-        <artifactId>dans-mvn-base</artifactId>
-        <version>2.0.0</version>
-    </parent>
--->
     <groupId>nl.knaw.dans.bridge.plugin.lib</groupId>
     <artifactId>bridge-plugin-lib</artifactId>
     <packaging>jar</packaging>
@@ -129,7 +119,6 @@
             <version>${fasterxml.jackson.datatype.version}</version>
         </dependency>
     </dependencies>
-
     <repositories>
         <repository>
             <id>DANS</id>
@@ -139,7 +128,6 @@
             <url>http://maven.dans.knaw.nl/</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>DANS</id>
@@ -149,27 +137,19 @@
             <url>http://maven.dans.knaw.nl/</url>
         </pluginRepository>
     </pluginRepositories>
-
     <build>
         <plugins>
             <plugin>
-                <groupId>org.jfrog.buildinfo</groupId>
-                <artifactId>artifactory-maven-plugin</artifactId>
+                <artifactId>maven-source-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${mvn.compiler.version}</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
+                <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${mvn.assembly.plugin.version}</version>
-                <configuration>
+                <configuration combine.self="override">
                     <!-- get all project dependencies -->
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -186,7 +166,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -198,20 +177,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <!-- skip the assembly -->
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
-
     </build>
 </project>

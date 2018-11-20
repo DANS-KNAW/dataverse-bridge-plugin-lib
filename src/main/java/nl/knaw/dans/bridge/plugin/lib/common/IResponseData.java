@@ -1,5 +1,5 @@
 /**
- * Copyright (C) ${project.inceptionYear} DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+ * Copyright (C) 2018 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import nl.knaw.dans.bridge.plugin.lib.util.StateEnum;
 import java.net.URL;
 import java.util.Optional;
 
+// TODO add javadoc
 /*
  * Created by Eko Indarto
  */
