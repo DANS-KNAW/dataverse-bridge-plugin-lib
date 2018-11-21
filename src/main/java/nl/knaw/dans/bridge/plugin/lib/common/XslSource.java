@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * XsltSource
  * 
- * Created by: Eko Indarto
+ * @author: Eko Indarto
  */
 public class XslSource {
     private String name;

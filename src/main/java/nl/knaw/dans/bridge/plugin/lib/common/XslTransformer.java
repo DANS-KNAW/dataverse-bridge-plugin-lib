@@ -20,7 +20,7 @@ import java.net.URL;
 /**
  * XslTransformer
  * 
- * Created by: Eko Indarto
+ * @author: Eko Indarto
  */
 public class XslTransformer {
     private String name;

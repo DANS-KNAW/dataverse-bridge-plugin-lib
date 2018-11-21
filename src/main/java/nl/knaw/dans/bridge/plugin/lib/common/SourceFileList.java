@@ -18,7 +18,8 @@ package nl.knaw.dans.bridge.plugin.lib.common;
 import java.util.List;
 
 /**
- * Class SourceFileList Created by Eko Indarto.
+ * Class SourceFileList
+ * @author: Eko Indarto.
  */
 public class SourceFileList {
     private String apiToken;

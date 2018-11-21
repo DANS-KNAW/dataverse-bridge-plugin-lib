@@ -25,7 +25,9 @@ import java.util.Optional;
 // TODO add javadoc
 /**
  * Class IAction
- * Created by Eko Indarto.
+ *
+ * @author: Eko Indarto.
+ *
  * Some discussion about using Optional in parameters:
  * https://stackoverflow.com/questions/31922866/why-should-java-8s-optional-not-be-used-in-arguments
  * https://softwareengineering.stackexchange.com/questions/238954/is-there-any-reason-not-to-use-optional-as-a-method-argument-in-the-case-where-y

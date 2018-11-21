@@ -22,7 +22,7 @@ import java.util.Optional;
 
 // TODO add javadoc
 /*
- * Created by Eko Indarto
+ * @author: Eko Indarto
  */
 public interface IResponseData {
 

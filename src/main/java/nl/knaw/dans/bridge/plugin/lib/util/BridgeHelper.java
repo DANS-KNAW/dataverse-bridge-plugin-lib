@@ -101,12 +101,12 @@ public class BridgeHelper {
          * When using an HTTPS-connection EXPECT-CONTINUE must be enabled, otherwise buffer overflow may follow
          */
         .setExpectContinueEnabled(true).build()) //
-                .addHeader("Content-Disposition", String.format("attachment; filename=%s", filename)) //
-                .addHeader("Content-MD5", md5) //
-                .addHeader("Packaging", BAGIT_URI) //
-                .addHeader("In-Progress", Boolean.toString(inProgress)) //
-                .setEntity(new ByteArrayEntity(chunk, ContentType.create(mimeType))) //
-                .build();
+        .addHeader("Content-Disposition", String.format("attachment; filename=%s", filename)) //
+        .addHeader("Content-MD5", md5) //
+        .addHeader("Packaging", BAGIT_URI) //
+        .addHeader("In-Progress", Boolean.toString(inProgress)) //
+        .setEntity(new ByteArrayEntity(chunk, ContentType.create(mimeType))) //
+        .build();
         return http.execute(request);
     }
 
@@ -160,8 +160,7 @@ public class BridgeHelper {
             new ObjectMapper().readTree(text);
             LOG.debug("Message is valid JSON.");
             return InputType.JSON;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // no need to log, only checking purpose
         }
 
@@ -169,14 +168,11 @@ public class BridgeHelper {
             DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(text)));
             LOG.debug("Message is valid XML.");
             return InputType.XML;
-        }
-        catch (SAXException e) {
+        } catch (SAXException e) {
             // no need to log, only checking purpose
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // no need to log, only checking purpose
-        }
-        catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException e) {
             // no need to log, only checking purpose
         }
 
@@ -201,7 +197,9 @@ public class BridgeHelper {
     }
 
     /*
-     * Requirements: - XSLT 3.0 - Saxon HE 9.8
+     * Requirements:
+     * - XSLT 3.0
+     * - Saxon HE 9.8
      */
     public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException {
         LOG.debug("jsonMetadataSourceUrlxsl: {} \t jsonMetadataSourceUrlL {}", jsonSourceUrl, xsltSourceUrl);
@@ -210,7 +208,9 @@ public class BridgeHelper {
     }
 
     /*
-     * Requirements: - XSLT 3.0 - Saxon HE 9.8
+     * Requirements:
+     * - XSLT 3.0
+     * - Saxon HE 9.8
      */
     public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl, String initialXsltTemplate, String paramJson) throws SaxonApiException,
             IOException

@@ -18,7 +18,9 @@ package nl.knaw.dans.bridge.plugin.lib.common;
 import org.apache.abdera.i18n.iri.IRI;
 
 /**
- * Class DestinationDar Created by Eko Indarto.
+ * Class DestinationDar
+ *
+ * @author: Eko Indarto.
  */
 public class DestinationDar {
     private IRI darIri;

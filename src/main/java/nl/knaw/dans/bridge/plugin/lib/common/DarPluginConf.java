@@ -21,7 +21,9 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 /**
- * DarPluginConf Created by Eko Indarto
+ * DarPluginConf
+ *
+ * @author: Eko Indarto
  */
 
 public class DarPluginConf {
