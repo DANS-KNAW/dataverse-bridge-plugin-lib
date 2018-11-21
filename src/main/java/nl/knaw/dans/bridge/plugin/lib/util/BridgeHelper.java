@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.knaw.dans.bridge.plugin.lib.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,22 +56,22 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
-import java.text.DecimalFormat;
 
 public class BridgeHelper {
-    public enum InputType{JSON, XML, OTHER}
+    public enum InputType {
+        JSON, XML, OTHER
+    }
 
     private static final String BAGIT_URI = "http://purl.org/net/sword/package/BagIt";
-   // static final BagFactory bagFactory = new BagFactory();
     private static final Logger LOG = LoggerFactory.getLogger(BridgeHelper.class);
 
     public static void zipDirectory(File dir, File zipFile) throws ZipException {
-        if (zipFile.exists()) zipFile.delete();
+        if (zipFile.exists())
+            zipFile.delete();
         ZipFile zf = new ZipFile(zipFile);
         ZipParameters parameters = new ZipParameters();
         zf.addFolder(dir, parameters);
     }
-
 
     public static CloseableHttpClient createHttpClient(URI uri, String uid, String pw, int timeout) {
         LOG.info("Create HttpClient for " + uri);
@@ -67,15 +82,15 @@ public class BridgeHelper {
     }
 
     public static CloseableHttpResponse post(URI uri, String mimeType, String input, CloseableHttpClient http, NameValuePair... nvps) throws IOException {
-        HttpUriRequest request = RequestBuilder.create("POST").setUri(uri).setConfig(RequestConfig.custom()
-                .setExpectContinueEnabled(true).build())
-                .addParameters(nvps)
-                .setEntity(new ByteArrayEntity(input.getBytes(), ContentType.create(mimeType))) //
+        HttpUriRequest request = RequestBuilder.create("POST").setUri(uri).setConfig(RequestConfig.custom().setExpectContinueEnabled(true).build())
+                .addParameters(nvps).setEntity(new ByteArrayEntity(input.getBytes(), ContentType.create(mimeType))) //
                 .build();
         return http.execute(request);
     }
 
-    public static CloseableHttpResponse sendChunk(DigestInputStream dis, int size, String method, URI uri, String filename, String mimeType, CloseableHttpClient http, boolean inProgress) throws IOException {
+    public static CloseableHttpResponse sendChunk(DigestInputStream dis, int size, String method, URI uri, String filename, String mimeType,
+            CloseableHttpClient http, boolean inProgress) throws IOException
+    {
         LOG.info("Send chunk file with filename: " + filename + " with size: " + size + " to " + uri);
         byte[] chunk = readChunk(dis, size);
         String md5 = new String(Hex.encodeHex(dis.getMessageDigest().digest()));
@@ -83,13 +98,13 @@ public class BridgeHelper {
         /*
          * When using an HTTPS-connection EXPECT-CONTINUE must be enabled, otherwise buffer overflow may follow
          */
-                .setExpectContinueEnabled(true).build()) //
-                .addHeader("Content-Disposition", String.format("attachment; filename=%s", filename)) //
-                .addHeader("Content-MD5", md5) //
-                .addHeader("Packaging", BAGIT_URI) //
-                .addHeader("In-Progress", Boolean.toString(inProgress)) //
-                .setEntity(new ByteArrayEntity(chunk, ContentType.create(mimeType))) //
-                .build();
+        .setExpectContinueEnabled(true).build()) //
+        .addHeader("Content-Disposition", String.format("attachment; filename=%s", filename)) //
+        .addHeader("Content-MD5", md5) //
+        .addHeader("Packaging", BAGIT_URI) //
+        .addHeader("In-Progress", Boolean.toString(inProgress)) //
+        .setEntity(new ByteArrayEntity(chunk, ContentType.create(mimeType))) //
+        .build();
         return http.execute(request);
     }
 
@@ -111,7 +126,7 @@ public class BridgeHelper {
         Abdera abdera = Abdera.getInstance();
         Parser parser = abdera.getParser();
         Document<T> receipt = parser.parse(new StringReader(text));
-         return receipt.getRoot();
+        return receipt.getRoot();
     }
 
     public static String transform(org.w3c.dom.Document doc) throws TransformerException {
@@ -122,7 +137,6 @@ public class BridgeHelper {
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         return writer.toString();
     }
-
 
     public static String transformXmlToXml(Templates cachedXsl, org.w3c.dom.Document doc) throws TransformerException {
         Transformer transformer = cachedXsl.newTransformer();
@@ -145,43 +159,41 @@ public class BridgeHelper {
             LOG.debug("Message is valid JSON.");
             return InputType.JSON;
         } catch (IOException e) {
-            //no need to log, only checking purpose
+            // no need to log, only checking purpose, assume no valid JSON
         }
 
         try {
             DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(text)));
             LOG.debug("Message is valid XML.");
             return InputType.XML;
-        } catch (SAXException e) {
-            //no need to log, only checking purpose
-        } catch (IOException e) {
-            //no need to log, only checking purpose
-        } catch (ParserConfigurationException e) {
-            //no need to log, only checking purpose
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            // no need to log, only checking purpose, assume no valid XML
         }
 
-        return InputType.OTHER;
+        return InputType.OTHER; // Could not determine type
     }
 
-    public static String transformSourceToXml(URL sourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException, BridgeException, TransformerException, ParserConfigurationException, SAXException {
+    public static String transformSourceToXml(URL sourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException, BridgeException, TransformerException,
+            ParserConfigurationException, SAXException
+    {
         String text = IOUtils.toString(sourceUrl, StandardCharsets.UTF_8);
         InputType inputType = getInputType(text);
-        switch (inputType ) {
-            case JSON:
-                return transformJsonToXml(sourceUrl, xsltSourceUrl);
-            case XML:
-                TransformerFactory transFact = new net.sf.saxon.TransformerFactoryImpl();
-                Templates cachedXsl = transFact.newTemplates(new StreamSource(text));
-                return transformXmlToXml(cachedXsl, buildDocumentFromString(text));
-            default:
-                throw new BridgeException("Only accept JSON or XML ", BridgeHelper.class);
+        switch (inputType) {
+        case JSON:
+            return transformJsonToXml(sourceUrl, xsltSourceUrl);
+        case XML:
+            TransformerFactory transFact = new net.sf.saxon.TransformerFactoryImpl();
+            Templates cachedXsl = transFact.newTemplates(new StreamSource(text));
+            return transformXmlToXml(cachedXsl, buildDocumentFromString(text));
+        default:
+            throw new BridgeException("Only accept JSON or XML ", BridgeHelper.class);
         }
     }
 
     /*
-    Requirements:
-    - XSLT 3.0
-    - Saxon HE 9.8
+     * Requirements:
+     * - XSLT 3.0
+     * - Saxon HE 9.8
      */
     public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException {
         LOG.debug("jsonMetadataSourceUrlxsl: {} \t jsonMetadataSourceUrlL {}", jsonSourceUrl, xsltSourceUrl);
@@ -190,11 +202,13 @@ public class BridgeHelper {
     }
 
     /*
-    Requirements:
-    - XSLT 3.0
-    - Saxon HE 9.8
+     * Requirements:
+     * - XSLT 3.0
+     * - Saxon HE 9.8
      */
-    public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl, String initialXsltTemplate, String paramJson) throws SaxonApiException, IOException {
+    public static String transformJsonToXml(URL jsonSourceUrl, URL xsltSourceUrl, String initialXsltTemplate, String paramJson) throws SaxonApiException,
+            IOException
+    {
         LOG.debug("xsltSourceUrl: {} \tdvnJsonMetadataSourceUrl: {}", xsltSourceUrl, jsonSourceUrl);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Processor processor = new Processor(false);
