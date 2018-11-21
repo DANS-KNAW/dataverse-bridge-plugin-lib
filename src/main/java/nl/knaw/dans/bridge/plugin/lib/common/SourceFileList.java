@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Class SourceFileList
- * @author: Eko Indarto.
+ * @author Eko Indarto.
  */
 public class SourceFileList {
     private String apiToken;

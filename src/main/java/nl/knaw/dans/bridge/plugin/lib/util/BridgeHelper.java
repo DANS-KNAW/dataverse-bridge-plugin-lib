@@ -56,7 +56,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
-import java.text.DecimalFormat;
 
 public class BridgeHelper {
     public enum InputType {
@@ -64,7 +63,6 @@ public class BridgeHelper {
     }
 
     private static final String BAGIT_URI = "http://purl.org/net/sword/package/BagIt";
-    // static final BagFactory bagFactory = new BagFactory();
     private static final Logger LOG = LoggerFactory.getLogger(BridgeHelper.class);
 
     public static void zipDirectory(File dir, File zipFile) throws ZipException {
@@ -161,22 +159,18 @@ public class BridgeHelper {
             LOG.debug("Message is valid JSON.");
             return InputType.JSON;
         } catch (IOException e) {
-            // no need to log, only checking purpose
+            // no need to log, only checking purpose, assume no valid JSON
         }
 
         try {
             DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(text)));
             LOG.debug("Message is valid XML.");
             return InputType.XML;
-        } catch (SAXException e) {
-            // no need to log, only checking purpose
-        } catch (IOException e) {
-            // no need to log, only checking purpose
-        } catch (ParserConfigurationException e) {
-            // no need to log, only checking purpose
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            // no need to log, only checking purpose, assume no valid XML
         }
 
-        return InputType.OTHER;
+        return InputType.OTHER; // Could not determine type
     }
 
     public static String transformSourceToXml(URL sourceUrl, URL xsltSourceUrl) throws SaxonApiException, IOException, BridgeException, TransformerException,

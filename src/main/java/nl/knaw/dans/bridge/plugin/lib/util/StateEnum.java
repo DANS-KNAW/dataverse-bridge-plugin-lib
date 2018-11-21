@@ -15,8 +15,8 @@
  */
 package nl.knaw.dans.bridge.plugin.lib.util;
 
-/*
- * @author: Eko Indarto
+/**
+ * @author Eko Indarto
  */
 public enum StateEnum {
     // @formatter:off

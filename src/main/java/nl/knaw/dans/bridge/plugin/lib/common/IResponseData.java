@@ -21,8 +21,8 @@ import java.net.URL;
 import java.util.Optional;
 
 // TODO add javadoc
-/*
- * @author: Eko Indarto
+/**
+ * @author Eko Indarto
  */
 public interface IResponseData {
 
@@ -43,5 +43,4 @@ public interface IResponseData {
     default Optional<URL> getDarLandingPage() {
         return Optional.empty();
     }
-
 }

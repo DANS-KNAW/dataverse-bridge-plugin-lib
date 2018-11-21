@@ -20,7 +20,7 @@ import org.apache.abdera.i18n.iri.IRI;
 /**
  * Class DestinationDar
  *
- * @author: Eko Indarto.
+ * @author Eko Indarto.
  */
 public class DestinationDar {
     private IRI darIri;

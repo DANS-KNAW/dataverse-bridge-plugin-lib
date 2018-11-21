@@ -20,7 +20,7 @@ import java.net.URL;
 /**
  * XslTransformer
  * 
- * @author: Eko Indarto
+ * @author Eko Indarto
  */
 public class XslTransformer {
     private String name;
@@ -40,7 +40,7 @@ public class XslTransformer {
      * Get name
      * 
      * @return name
-     **/
+     */
     public String getName() {
         return name;
     }

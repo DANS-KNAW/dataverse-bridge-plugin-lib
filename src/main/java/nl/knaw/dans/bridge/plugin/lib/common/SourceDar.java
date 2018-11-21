@@ -19,7 +19,7 @@ import java.net.URL;
 
 /**
  * Class SourceDar
- * @author: Eko Indarto.
+ * @author Eko Indarto.
  */
 public class SourceDar {
     URL metadataUrl;

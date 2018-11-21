@@ -19,7 +19,7 @@ package nl.knaw.dans.bridge.plugin.lib.exception;
  * The BridgeException wraps all checked standard Java exception and enriches them with a custom error code.
  * You can use this code to retrieve localized error messages and to link to the documentation.
  *
- * @author: Eko Indarto
+ * @author Eko Indarto
  */
 public class BridgeException extends Exception {
     private String className;

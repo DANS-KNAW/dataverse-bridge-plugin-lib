@@ -26,7 +26,7 @@ import java.util.Optional;
 /**
  * Class IAction
  *
- * @author: Eko Indarto.
+ * @author Eko Indarto.
  *
  * Some discussion about using Optional in parameters:
  * https://stackoverflow.com/questions/31922866/why-should-java-8s-optional-not-be-used-in-arguments

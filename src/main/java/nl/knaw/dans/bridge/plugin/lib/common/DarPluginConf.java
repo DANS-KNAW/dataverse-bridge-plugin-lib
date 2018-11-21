@@ -23,13 +23,12 @@ import java.util.List;
 /**
  * DarPluginConf
  *
- * @author: Eko Indarto
+ * @author Eko Indarto
  */
 
 public class DarPluginConf {
     private String darName;
     private IRI darIri;
-    // private Type darType;
     private String actionClassName;
     private URLClassLoader actionClassLoader;
     private List<XslSource> xslSourceList;
@@ -83,9 +82,4 @@ public class DarPluginConf {
     public void setXslSourceList(List<XslSource> xslSourceList) {
         this.xslSourceList = xslSourceList;
     }
-    /*
-     * enum Type { ARCHIVER("ARCHIVE"), REGISTRAR("REGISTRAR"); IRODS("IRODS"); private String value; Type(String value) { this.value = value; } public String
-     * toString() { return String.valueOf(value); } public static Type fromValue(String text) { for (Type b : Type.values()) { if
-     * (String.valueOf(b.value).equals(text)) { return b; } } throw new IllegalArgumentException("No matching constant for [" + text + "]"); } }
-     */
 }

@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 // TODO add javadoc
-/*
- * @author: Eko Indarto
+/**
+ * @author Eko Indarto
  */
 public interface ITransform {
     Map<String, String> transformMetadata(SourceDar sourceDar, DestinationDar destinationDar, List<XslTransformer> xslTransformerList) throws BridgeException;

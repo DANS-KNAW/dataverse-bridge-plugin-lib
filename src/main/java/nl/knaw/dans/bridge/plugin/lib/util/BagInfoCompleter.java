@@ -24,7 +24,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Class BagInfoCompleter
- * @author: Eko Indarto on 08/05/17.
+ * @author Eko Indarto on 08/05/17.
  */
 public class BagInfoCompleter implements Completer {
     private BagFactory bagFactory;

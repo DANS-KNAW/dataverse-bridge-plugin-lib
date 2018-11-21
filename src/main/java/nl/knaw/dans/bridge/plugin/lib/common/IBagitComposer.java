@@ -22,8 +22,8 @@ import java.net.URL;
 import java.util.Map;
 
 // TODO add javadoc
-/*
- * @author: Eko Indarto
+/**
+ * @author Eko Indarto
  */
 public interface IBagitComposer {
     File buildBag(String bagitBaseDir, URL srcExportedUrl, Map<String, String> transformedXml, SourceFileList sourceFileList) throws BridgeException;

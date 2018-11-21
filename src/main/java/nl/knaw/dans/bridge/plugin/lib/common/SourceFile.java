@@ -17,7 +17,7 @@ package nl.knaw.dans.bridge.plugin.lib.common;
 
 /**
  * Class SourceFile
- * @author: Eko Indarto.
+ * @author Eko Indarto.
  */
 public class SourceFile {
     private String name;
