@@ -15,6 +15,9 @@
  */
 package nl.knaw.dans.bridge.plugin.lib.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Eko Indarto
  */
@@ -30,10 +33,14 @@ public enum StateEnum {
     REJECTED("REJECTED"),
     FAILED("FAILED"),
     INVALID("INVALID"),
+    FINALIZING("FINALIZING"),
+    UPLOADED("UPLOADED"),
+    DRAFT("DRAFT"),
     ARCHIVED("ARCHIVED");
     // @formatter:on
 
     private String value;
+    private static final Logger LOG = LoggerFactory.getLogger(StateEnum.class);
 
     StateEnum(String value) {
         this.value = value;
@@ -49,6 +56,8 @@ public enum StateEnum {
                 return b;
             }
         }
-        throw new IllegalArgumentException("No matching constant for [" + text + "]");
+        LOG.warn("No matching constant for [{}]", text);
+        return UNKNOWN;
     }
 }
+
